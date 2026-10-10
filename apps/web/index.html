@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Discord application id 是公开配置；部署 Activity 时填入，禁止放 client secret。 -->
+    <meta name="discord-client-id" content="" />
+    <meta
+      name="description"
+      content="ARC Dungeon：在 Arc 测试网上记录战绩的像素 Roguelike 地牢游戏。"
+    />
+    <title>ARC Dungeon · Arc Testnet</title>
+    <link rel="icon" href="./assets/branding/arc-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./src/styles.css" />
+    <link rel="stylesheet" href="./src/arc/panel.css" />
+  </head>
+  <body>
+    <main class="shell arc-shell" aria-label="ARC Dungeon">
+      <header class="arc-toolbar">
+        <div class="arc-brand"><img src="./assets/branding/arc-logo.svg" alt="" width="28" height="28" /><strong>ARC DUNGEON</strong><span>测试网</span></div>
+        <p id="arc-wallet-status" role="status">钱包未连接</p>
+        <button id="arc-connect" type="button">连接钱包</button>
+        <button id="arc-switch" type="button" disabled>切换测试网</button>
+        <details id="arc-records">
+          <summary>链上战绩</summary>
+          <section class="arc-panel" aria-label="链上战绩面板">
+            <h1>记录这次冒险</h1>
+            <p id="arc-preview">完成一次地牢探索后，可发布本局战绩。</p>
+            <p>发布会消耗测试 USDC 作为交易费用。战绩公开可查，由玩家自行提交；游戏积分、门票与皮肤仍保存在本地。</p>
+            <button id="arc-submit" type="button" disabled>发布本局战绩</button>
+            <p id="arc-record-status" role="status" aria-live="polite">无需钱包也可先游玩。</p>
+            <div id="arc-history" aria-label="当前钱包的战绩记录"></div>
+            <a href="https://faucet.circle.com" target="_blank" rel="noopener noreferrer">领取测试 USDC</a>
+          </section>
+        </details>
+      </header>
+      <section class="game-stage" aria-label="ARC 游戏画面">
+        <canvas id="game" width="320" height="180"></canvas>
+        <div id="fallback" class="fallback" hidden>
+          你的浏览器暂不支持 Canvas。
+        </div>
+      </section>
+    </main>
+    <script>
+      (() => {
+        const fallback = document.querySelector("#fallback");
+        const showStartupFailure = () => {
+          if (fallback) {
+            fallback.textContent =
+              "游戏启动失败。请尝试硬刷新（Cmd/Ctrl+Shift+R），详情见浏览器控制台。";
+            fallback.hidden = false;
+          }
+        };
+        const finishStartup = () => {
+          window.removeEventListener("error", showStartupFailure);
+          window.removeEventListener("unhandledrejection", showStartupFailure);
+          window.removeEventListener("rialo:startup-complete", finishStartup);
+        };
+        window.addEventListener("error", showStartupFailure);
+        window.addEventListener("unhandledrejection", showStartupFailure);
+        window.addEventListener("rialo:startup-complete", finishStartup);
+      })();
+    </script>
+    <script type="module">
+      import { initializeArcPanel } from "./src/arc/panel.js";
+      initializeArcPanel();
+    </script>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

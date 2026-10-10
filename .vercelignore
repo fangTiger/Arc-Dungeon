@@ -1,0 +1,13 @@
+.git/
+.env
+.env.*
+.DS_Store
+node_modules/
+.playwright-cli/
+output/
+test/
+scripts/
+docs/
+openspec/
+README.md
+VERIFICATION.md
